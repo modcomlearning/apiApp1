@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">MyTabs</string>
+    <string name="tab_text_1">Info</string>
+    <string name="tab_text_2">Menu</string>
+    <string name="tab_text_3">Products</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_auto_garage">Map</string>
+</resources>

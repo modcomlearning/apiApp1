@@ -1,0 +1,97 @@
+from flask import *
+app = Flask(__name__)
+import pymysql
+# Your routes
+
+con = pymysql.connect(host='Modcom.mysql.pythonanywhere-services.com', user='Modcom', password='2491Mod@#$',
+                          database='Modcom$default')
+
+@app.route('/api/all')
+def all():
+    cursor = con.cursor(pymysql.cursors.DictCursor)
+    sql = "select * from locations"
+    cursor.execute(sql)
+    rows = cursor.fetchall()
+    return jsonify(rows)
+
+# below code recieves values from android as JSON
+@app.route('/post', methods=['POST'])
+def add_post():
+    from flask import request
+    json = request.json
+    firstname = json['firstname']
+    lastname = json['lastname']
+    residence = json['residence']
+    phone = json['phone']
+    request1 = json['request']
+
+    if firstname == "":
+        response = jsonify({"msg": 'First Name is Empty!'})
+        response.status_code = 200
+        return response
+
+    elif lastname == "":
+        response = jsonify({"msg": 'Last Name is Empty!'})
+        response.status_code = 200
+        return response
+
+    elif len(phone) < 10:
+        response = jsonify({"msg": 'Phone shpuld be atleast 10 numbers!'})
+        response.status_code = 200
+        return response
+
+    elif request1 == "":
+        response = jsonify({"msg": 'Request is Empty!'})
+        response.status_code = 200
+        return respons
+
+    else:
+        SQL_Query = "INSERT INTO posts(firstname, lastname, residence, phone, request) VALUES(%s, %s, %s, %s, %s)"
+        data = (firstname, lastname, residence, phone, request1)
+        Pointer = con.cursor()
+        Pointer.execute(SQL_Query, data)
+        con.commit()
+        response = jsonify({"msg": 'Post  Received!'})
+        response.status_code = 200
+        return response
+
+  # github.com/modcomlearning/api
+
+
+@app.route('/api/posts')
+def posts():
+    cursor = con.cursor(pymysql.cursors.DictCursor)
+    sql = "select * from posts"
+    cursor.execute(sql)
+    rows = cursor.fetchall()
+    return jsonify(rows)
+
+
+@app.route('/api/search_post', methods=['POST'])
+def search_posts():
+    from flask import request
+    json = request.json
+    phone = json['phone']
+    cursor = con.cursor(pymysql.cursors.DictCursor)
+    sql = "select * from posts where phone = %s"
+    cursor.execute(sql, (phone))
+    if cursor.rowcount ==0:
+        response = jsonify([{"msg": 'No  Posts'}])
+        response.status_code = 201
+        return response
+    else:
+        rows = cursor.fetchall()
+        response = jsonify(rows)
+        response.status_code = 200
+        return response
+
+
+
+# reload the pythonpython anywhere from WEb
+# go to browser
+# modcom.pythonanywhere.com/api/posts
+
+if __name__ == '__main__':
+    app.run()
+# test
+# http://127.0.0.1:5000/api/all
